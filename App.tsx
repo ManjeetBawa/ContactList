@@ -12,29 +12,59 @@ import {Text, View, FlatList, TouchableOpacity} from 'react-native';
 
 const App = () => {
   const [data, setData] = useState<[]>([]);
-  const getcontacts = () => {
-    Contacts.getAll().then(contacts => {
-      setData(contacts);
-    });
+  const getContacts = async () => {
+    try {
+      const permission = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.READ_CONTACTS,
+      );
+      if (permission === 'granted') {
+        const contacts = await Contacts.getAll();
+        // console.log(contacts);
+        setData(contacts);
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
-  // item.displayName[0]}{item.familyName[0]
+  // Contacts.getAll().then((contacts) => {
+  //     console.log(contacts);
+  //     setContacts([contacts]);
+  // })
   useEffect(() => {
-    getcontacts();
+    getContacts();
   }, []);
+  // item.displayName[0]}{item.familyName[0]
+
   const renderpost = ({item}) => {
     // console.log(item);
-    const col = ['red', 'orange', 'yellow', 'green', 'blue', 'purple', 'pink', 'brown', 'lightgreen', 'grey'];
+    const col = [
+      'red',
+      'orange',
+      'yellow',
+      'green',
+      'blue',
+      'purple',
+      'pink',
+      'brown',
+      'lightgreen',
+      'grey',
+    ];
     return (
       <View style={styles.box}>
-        <View style={[styles.picture,{backgroundColor:col[Math.floor(Math.random() * 10)]}]}>
+        <View
+          style={[
+            styles.picture,
+            {backgroundColor: col[Math.floor(Math.random() * 10)]},
+          ]}>
           {item.hasThumbnail && (
             <Image source={{uri: item.thumbnailPath}} style={styles.pic} />
           )}
-          {
-            !item.hasThumbnail && (
-              <Text style={styles.initial}>{item.displayName[0]}{item.familyName[0]}</Text>
-            )
-          }
+          {!item.hasThumbnail && (
+            <Text style={styles.initial}>
+              {item.displayName[0]}
+              {item.familyName[0]}
+            </Text>
+          )}
         </View>
         <View style={styles.contactpost}>
           <Text style={styles.displayName}>{item.displayName}</Text>
@@ -55,4 +85,3 @@ const App = () => {
 };
 
 export default App;
-
