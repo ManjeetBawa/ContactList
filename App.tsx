@@ -1,17 +1,11 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
 import styles from './style';
 import React, {useEffect, useState} from 'react';
 import Contacts from 'react-native-contacts';
-import {Image, PermissionsAndroid, StyleSheet} from 'react-native';
-import {Text, View, FlatList, TouchableOpacity} from 'react-native';
+import {Image, PermissionsAndroid} from 'react-native';
+import {Text, View, FlatList} from 'react-native';
 
 const App = () => {
-  const [data, setData] = useState<[]>([]);
+  const [data, setData] = useState([]);
   const getContacts = async () => {
     try {
       const permission = await PermissionsAndroid.request(
@@ -23,20 +17,14 @@ const App = () => {
         setData(contacts);
       }
     } catch (error) {
-      console.log(error);
+      return <Text>returning error</Text>;
     }
   };
-  // Contacts.getAll().then((contacts) => {
-  //     console.log(contacts);
-  //     setContacts([contacts]);
-  // })
   useEffect(() => {
     getContacts();
   }, []);
-  // item.displayName[0]}{item.familyName[0]
 
   const renderpost = ({item}) => {
-    // console.log(item);
     const col = [
       'red',
       'orange',
@@ -67,8 +55,13 @@ const App = () => {
           )}
         </View>
         <View style={styles.contactpost}>
-          <Text style={styles.displayName}>{item.displayName}</Text>
-          <Text style={styles.number}>{item.phoneNumbers[0].number}</Text>
+          <Text style={styles.displayName}>{item?.displayName}</Text>
+          <Text style={styles.number}>
+            {' '}
+            {item.phoneNumbers.length > 0
+              ? item?.phoneNumbers[0]?.number
+              : null}
+          </Text>
         </View>
       </View>
     );
@@ -76,9 +69,6 @@ const App = () => {
   return (
     <View style={styles.container}>
       <Text style={styles.header}>Contact List</Text>
-      {/* <TouchableOpacity onPress={getcontacts}>
-        <Text>click here</Text>
-      </TouchableOpacity> */}
       <FlatList data={data} renderItem={renderpost} />
     </View>
   );
